@@ -9,7 +9,7 @@ import RootLayout from './_root/RootLayout';
 
 const App = () => {
   return (
-    <>
+    <main className='flex h-screen'>
       <Routes>
         {/* Private Routes */}
         <Route element={<AuthLayout />}>
@@ -22,7 +22,7 @@ const App = () => {
           <Route index element={<Home />} />
         </Route>
       </Routes>
-    </>
+    </main>
   );
 };
 
