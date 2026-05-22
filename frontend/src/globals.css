@@ -2,11 +2,11 @@
 
 @import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
-@import "shadcn/tailwind.css";
+@import 'shadcn/tailwind.css';
 
-@import "@fontsource-variable/geist";
+@import '@fontsource-variable/geist';
 
 @custom-variant dark (&:is(.dark *));
 @plugin 'tailwindcss-animate';
@@ -210,7 +210,7 @@
   }
 
   body {
-    @apply min-h-screen font-inter bg-background text-foreground;
+    @apply bg-dark-1 text-white min-h-screen font-inter;
   }
   html {
     @apply font-sans;
