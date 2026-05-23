@@ -11,6 +11,51 @@ import { UpdatePostDto } from './dto/updatePost.dto';
 export class PostsService {
   constructor(private prisma: PrismaService) {}
 
+  async create(dto: CreatePostDto, creatorId: string) {
+    return this.prisma.post.create({
+      data: { ...dto, creatorId },
+    });
+  }
+
+  async update(id: string, dto: UpdatePostDto, userId: string) {
+    const post = await this.prisma.post.findUnique({ where: { id } });
+
+    if (!post) throw new NotFoundException('Post not found');
+    if (post.creatorId !== userId)
+      throw new ForbiddenException('Not your post');
+
+    return this.prisma.post.update({
+      where: { id },
+      data: dto,
+    });
+  }
+
+  async fetchPost(id: string) {
+    const post = await this.prisma.post.findUnique({
+      where: { id },
+      include: {
+        creator: { select: { id: true, name: true, imageUrl: true } },
+      },
+    });
+
+    if (!post) throw new NotFoundException('Post not found');
+
+    return post;
+  }
+
+  async deletePost(id: string, userId: string) {
+    const post = await this.prisma.post.findUnique({ where: { id } });
+
+    if (!post) throw new NotFoundException('Post not found');
+
+    if (post.creatorId !== userId)
+      throw new ForbiddenException('Not your post');
+
+    await this.prisma.post.delete({ where: { id } });
+
+    return { message: 'Post deleted successfully' };
+  }
+
   async fetchPosts(page: number, limit: number) {
     const skip = (page - 1) * limit;
 
@@ -47,50 +92,6 @@ export class PostsService {
         creator: { select: { id: true, name: true, imageUrl: true } },
       },
     });
-  }
-
-  async fetchPost(id: string) {
-    const post = await this.prisma.post.findUnique({
-      where: { id },
-      include: {
-        creator: { select: { id: true, name: true, imageUrl: true } },
-      },
-    });
-
-    if (!post) throw new NotFoundException('Post not found');
-
-    return post;
-  }
-
-  async create(dto: CreatePostDto, creatorId: string) {
-    return this.prisma.post.create({
-      data: { ...dto, creatorId },
-    });
-  }
-
-  async update(id: string, dto: UpdatePostDto, userId: string) {
-    const post = await this.prisma.post.findUnique({ where: { id } });
-
-    if (!post) throw new NotFoundException('Post not found');
-    if (post.creatorId !== userId)
-      throw new ForbiddenException('Not your post');
-
-    return this.prisma.post.update({
-      where: { id },
-      data: dto,
-    });
-  }
-
-  async deletePost(id: string, userId: string) {
-    const post = await this.prisma.post.findUnique({ where: { id } });
-
-    if (!post) throw new NotFoundException('Post not found');
-    if (post.creatorId !== userId)
-      throw new ForbiddenException('Not your post');
-
-    await this.prisma.post.delete({ where: { id } });
-
-    return { message: 'Post deleted successfully' };
   }
 
   async likePost(id: string, userId: string) {

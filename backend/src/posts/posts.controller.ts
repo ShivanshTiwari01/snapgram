@@ -17,22 +17,6 @@ import { type Request } from 'express';
 @Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}
-
-  @Get()
-  fetchPosts(@Query('page') page = '1', @Query('limit') limit = '10') {
-    return this.postsService.fetchPosts(+page, +limit);
-  }
-
-  @Get('search')
-  search(@Query('q') q: string) {
-    return this.postsService.search(q);
-  }
-
-  @Get(':id')
-  fetchPost(@Param('id') id: string) {
-    return this.postsService.fetchPost(id);
-  }
-
   @Post()
   create(@Body() dto: CreatePostDto, @Req() req: Request) {
     return this.postsService.create(dto, req.user!.id);
@@ -47,9 +31,24 @@ export class PostsController {
     return this.postsService.update(id, dto, req.user!.id);
   }
 
+  @Get(':id')
+  fetchPost(@Param('id') id: string) {
+    return this.postsService.fetchPost(id);
+  }
+
   @Delete(':id')
   delete(@Param('id') id: string, @Req() req: Request) {
     return this.postsService.deletePost(id, req.user!.id);
+  }
+
+  @Get()
+  fetchPosts(@Query('page') page = '1', @Query('limit') limit = '10') {
+    return this.postsService.fetchPosts(+page, +limit);
+  }
+
+  @Get('search')
+  search(@Query('q') q: string) {
+    return this.postsService.search(q);
   }
 
   @Patch(':id/like')
