@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtGuard } from './common/guards/jwt.guard';
+import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,7 +11,9 @@ async function bootstrap() {
 
   const jwtService = app.get(JwtService);
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtGuard(jwtService, reflector));
+  const prismaService = app.get(PrismaService);
+
+  app.useGlobalGuards(new JwtGuard(jwtService, reflector, prismaService));
 
   app.setGlobalPrefix('api/v1');
 
