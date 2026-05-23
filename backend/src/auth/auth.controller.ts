@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { SignupDto } from './dto/signup.dto';
+import { SigninDto } from './dto/signin.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { type Request } from 'express';
 
@@ -9,19 +9,25 @@ import { type Request } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public() // skip JWT check — anyone can register
-  @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
+  @Public()
+  @Post('signup')
+  signup(@Body() dto: SignupDto) {
+    return this.authService.signup(dto);
   }
 
-  @Public() // skip JWT check — anyone can login
-  @Post('login')
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  @Public()
+  @Post('signin')
+  signin(@Body() dto: SigninDto) {
+    return this.authService.signin(dto);
   }
 
-  @Get('me') // protected — guard runs, req.user is set
+  @Post('signout')
+  signOut(@Req() req: Request) {
+    const token = req.headers.authorization?.split(' ')[1];
+    return this.authService.signout(token!);
+  }
+
+  @Get('me')
   getMe(@Req() req: Request) {
     return req.user;
   }

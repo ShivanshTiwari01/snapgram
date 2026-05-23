@@ -164,51 +164,6 @@ The app will be available at `http://localhost:5173`.
 
 ---
 
-## Database Schema (Prisma)
-
-```prisma
-model User {
-  id        String   @id @default(uuid())
-  accountId String   @unique
-  name      String
-  username  String   @unique
-  email     String   @unique
-  imageUrl  String?
-  imageId   String?
-  bio       String?
-  posts     Post[]
-  saves     Save[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Post {
-  id        String   @id @default(uuid())
-  creator   User     @relation(fields: [creatorId], references: [id])
-  creatorId String
-  caption   String
-  imageUrl  String
-  imageId   String
-  location  String?
-  tags      String[]
-  likes     String[]
-  saves     Save[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Save {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String
-  createdAt DateTime @default(now())
-}
-```
-
----
-
 ## Scripts
 
 ### Frontend
